@@ -1,0 +1,27 @@
+{% extends 'movies/layout.html' %}
+
+{% block title %} MovieVerse Genres {% endblock %}
+    
+{% block body %}
+    <div class="all-genre-list">
+        <ul class="genre-names">
+            <h1>All Genres</h1>
+            {% for genre in genres %}
+                <li>
+                    <a href="{% url 'genre-detail' genre.id %}" 
+                        data-backdrop="{{ genre.backdrop_path }}">
+                        {{ genre.name }}
+                        <i class="fa-solid fa-angle-right"></i>
+                    </a>
+                </li>
+            {% endfor %}
+            <div class="scroll-icon">
+                <i class="fa-solid fa-angle-up"></i>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+        </ul>
+        <figure class="genre-movie">
+            <img src="" id="genre-image">
+        </figure>
+    </div>
+{% endblock %}

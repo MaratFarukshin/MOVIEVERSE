@@ -1,0 +1,60 @@
+<aside class="filter-sidebar">
+    <h1 class="filter-count">Filters</h1>
+    <form class="filter-form" method="get" action="">
+
+        <input type="hidden" name="view" value="{{ view_mode }}">
+
+        <!-- Genre Filter -->
+        <h3>Genres ({{ available_genres|length }})<i class="fa-solid fa-minus"></i></h3>
+        <ul class="filter-button-list">
+            {% for genre in available_genres.keys %}
+                <li class="filter-button">
+                    <input type="checkbox" name="genre" value="{{ genre }}" 
+                    class="filter-checkbox" id="genre-{{ genre }}"
+                    {% if genre in selected_genres %}checked{% endif %}>
+                    <label for="genre-{{ genre }}">{{ genre }}</label>
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <!-- Award Category Filter -->
+        <h3>Awards ({{ award_categories_with_winners|length }})<i class="fa-solid fa-minus"></i></h3>
+        <ul class="filter-button-list">
+            {% for category in award_categories_with_winners %}
+                <li class="filter-button">
+                    <input type="checkbox" name="award_category" value="{{ category }}"
+                    class="filter-checkbox" id="award-{{ category }}"
+                    {% if category in selected_award_categories %}checked{% endif %}>
+                    <label for="award-{{ category }}">{{ category }}</label>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Actor Filter -->
+        <h3>Actors ({{ actors_with_movies|length }})<i class="fa-solid fa-minus"></i></h3>
+        <ul class="filter-button-list">
+            {% for actor in actors_with_movies %}
+                <li class="filter-button">
+                    <input type="checkbox" name="actor" value="{{ actor.name }}" 
+                    class="filter-checkbox" id="actor-{{ actor.name }}" 
+                    {% if actor.name in selected_actors %}checked{% endif %}>
+                    <label for="actor-{{ actor.name }}">{{ actor.name }}</label>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div>
+            <label for="upcoming">Show Upcoming Movies</label>
+            <input type="checkbox" id="upcoming" name="upcoming" value="on"
+                {% if upcoming == 'on' %}checked{% endif %}>
+        </div>
+        
+        <div>
+            <h3>Year</h3>
+            <div class="range">
+                <input type="range" id="rangeInput" name="year" min="1990" max="2024" value="2024" class="slider">
+                <div class="value max">2024</div>
+            </div>
+        </div>
+    </form>
+</aside>

@@ -1,0 +1,345 @@
+{% extends 'movies/layout.html' %}
+
+{% block body %}
+    {% include 'users/partials/add_to_list_form.html' %}
+    {% include 'movies/partials/add_review_form.html' %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="featured-movie">
+            <img src="media/media/backdrop_VyAOcwH.jpg" alt="">
+            <div class="text">
+                <h1 id="movie-title">Spider-Man</h1>
+                <h3 id="movie-subtitle">Across the Spiderverse</h3>
+                <div class="featured-buttons">
+                    <a href="movies/155" id="movie-link" class="movie-link">View Details</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Movies Section -->
+    <section class="movie-list hidden">
+        <div class="section-title">
+            <h3 class="marker">Popular Movies</h3>
+            <div class="section-link">
+                <a href="{% url 'movie-list' %}">View All</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                {% for movie in popular_movies %}
+                <div class="swiper-slide index-swiper-slide">
+                    <a href="{% url 'movie-detail' movie.pk %}">
+                        <img src="{{ movie.poster_path.url }}" alt="{{ movie.title }}">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Movies and TV Section -->
+    <section class="movies-and-tv">
+        <div class="centered-section-title hidden">
+            <h1 class="marker">Movies and TV</h1>
+            <p>Discover the latest movies and TV shows curated just for you.</p>
+        </div>
+        <div class="wrapper">
+            <div class="image hidden">
+                <a href="{% url 'movie-list' %}">
+                    <img src="{{ random_movie.backdrop_path.url }}" alt="">
+                </a>
+                <div class="circle-label">
+                    <h3>Movies</h3>
+                </div>
+                <div class="overlay">
+                    <h2>{{ random_movie.title }}</h2>
+                    <div class="details">
+                        {% if random_movie.genres %}
+                            <p>{{ random_movie.genres.first }}</p>
+                        {% endif %}
+                        <p><i class="fa-solid fa-star"></i>{{ random_movie.avg_rating|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="image hidden">
+                <img src="media/media/breaking bad.jpg" alt="">
+                <div class="circle-label">
+                    <h3>TV Series</h3>
+                </div>
+                <div class="overlay">
+                    <h2>Breaking Bad</h2>
+                    <div class="details">
+                        <p>Action</p>
+                        <p><i class="fa-solid fa-star"></i>9.5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Movies Section -->
+    {% if new_movies %}
+    <section class="movie-list hidden">
+        <div class="section-title">
+            <h3 class="marker">New Movies</h3>
+            <div class="section-link">
+                <a href="{% url 'movie-list' %}">View All</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                {% for movie in new_movies %}
+                <div class="swiper-slide index-swiper-slide">
+                    <a href="{% url 'movie-detail' movie.pk %}">
+                        <img src="{{ movie.poster_path.url }}" alt="{{ movie.title }}">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Just Added Section -->
+    <section class="movie-list hidden">
+        <div class="section-title">
+            <h3 class="marker">Just Added</h3>
+            <div class="section-link">
+                <a href="{% url 'movie-list' %}">View All</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                {% for movie in just_added %}
+                <div class="swiper-slide index-swiper-slide"> 
+                    <a href="{% url 'movie-detail' movie.pk %}">
+                        <img src="{{ movie.poster_path.url }}" alt="{{ movie.title }}">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>            
+        </div>
+    </section>
+
+    <!-- Popular lists -->
+    <section class="popular-lists">
+        <div class="section-title hidden">
+            <h3 class="marker">Custom Lists</h3>
+            <div class="section-link">
+                <a href="{% url 'all-custom-lists' %}">View All Lists</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class="main-list">
+                {% with list=featured_list %}
+                    <a href="{% url 'list-detail' featured_list.id %}">
+                        {% include 'movies/partials/custom-list-item.html' %}
+                    </a>
+                {% endwith %}
+            </div>
+            <ul class="other-lists">
+                {% for list in popular_lists %}
+                    {% if not forloop.counter == 1 %}
+                        <li>
+                            <figure>
+                                {% for movie in list.movies.all|slice:"1" %}
+                                    <img src="{{ movie.poster_path.url }}" alt="">
+                                {% endfor %}
+                            </figure>
+                            <div class="details">
+                                <h3><i class="fa-solid fa-list"></i>{{ list.name }}</h3>
+                                <span>{{ list.movies.count }} Movies</span>
+                                <a href="{% url 'list-detail' list.id %}">
+                                    View List
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </a>
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+
+    <!-- Popular Genres Section -->
+    <section class="popular-genres">
+        <div class="section-title hidden">
+            <h3 class="marker">Popular Genres</h3>
+            <div class="section-link">
+                <a href="{% url 'genre-list' %}">View All Genres</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <ul class="genre-list">
+            {% for genre, genre_info in genre_dict.items %}
+                <li class="genre-card hidden">
+                    <a href="{% url 'genre-detail' genre_info.2 %}"> 
+                        <img src="{{ genre_info.1}}" alt="">
+                    </a>
+                    <div class="genre-overlay">
+                        <h3>{{ genre_info.0 }}</h3> 
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Award-Winning Movies Section -->
+    <section class="award-winning">
+        <div class="centered-section-title hidden">
+            <h1 class="marker">Award Winners</h1>
+            <p>Explore the best in award-winning cinema</p>
+        </div>
+        <div class="wrapper">
+            <div class="main-image hidden">
+                <img src="media/movie_images/oppenheimer-look9.jpg" alt="">
+                <div class="overlay">
+                    <h1>Award Winning Movies</h1>
+                    <p>Discover top films celebrated globally for their excellence</p>
+                    <div class="link">
+                        <a href="">View Movies</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Movies Section -->
+    <section class="movie-list hidden">
+        <div class="section-title">
+            <h3 class="marker">Upcoming Releases</h3>
+            <div class="section-link">
+                <a href="{% url 'movie-list' %}">View All</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <div class="swiper mySwiper">
+            <ul class="upcoming-list">
+                {% for month_year, movie_data in upcoming_movie_and_date.items %}
+                    <li class="upcoming-list-month">
+                        <div class="month">
+                            <h3>{{ month_year }}</h3>
+                            <div class="horizontal-line"></div>
+                        </div>
+                        <ul class="month-movie-list">
+                            {% for data in movie_data %}
+                                <li class="month-movie-item">
+                                    <p class="day">{{ data.day }}</p>
+                                    <a href="{% url 'movie-detail' data.movie.pk %}">
+                                        <img src="{{ data.movie.poster_path.url }}" alt="">
+                                    </a>
+                                    <div class="details">
+                                        <h4>{{ data.movie.title }}<span>{{ data.movie.release_date.year }}</span></h4>
+                                        <div class="tags">
+                                            {% if data.movie.genres.first %}
+                                                <div class="genre-tag">{{ data.movie.genres.first }}</div>
+                                            {% endif %}
+                                            <p>{{ data.movie.runtime }}</p>
+                                        </div>
+                                        <div class="cast-list">
+                                            {% for actor in data.movie.actors.all %}
+                                                <p>{{ actor }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div> 
+                                </li>
+                            {% endfor %}
+                            <a href="" class="month-link">View all for {{ month_year }} <i class="fa-solid fa-angle-right"></i></a>
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+
+    <!-- Popular Actors Section -->
+    <section class="popular-actors">
+        <div class="section-title">
+            <h3 class="marker">Popular Actors</h3>
+            <div class="section-link">
+                <a href="">View All</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <ul class="popular-actors-list">
+            {% for actor, movie in popular_actors_and_movie.items %}
+                <li class="item hidden">
+                    <div class="image">
+                        <a href="{% url 'person-detail' 'actors' actor.pk %}">
+                            <img src="{{ actor.image.url }}" alt="{{ actor }}">
+                        </a>
+                    </div>
+                    <div class="details">
+                        <h3>{{ actor }}</h3>
+                        <span>{{ movie.0 }}</span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="top-rated-movies hidden">
+        <div class="section-title">
+            <h3 class="marker">Top Rated Movies</h3>
+            <div class="section-link">
+                <a href="">View All</a>
+                <i class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+        <div class="wrapper">
+            <ol>
+                {% for movie in top_rated_movies %}
+                    <li>
+                        {% include 'movies/partials/card.html' with movie=movie %}
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </section>
+    <section class="popular-reviews-section">
+        <div class="centered-section-title hidden">
+            <h1 class="marker">Popular Reviews</h1>
+        </div>
+        <ul class="wrapper">
+            {% for popular_review in most_popular_reviews %}
+                <li class="popular-review">
+                    <img src="{{ popular_review.movie.poster_path.url }}" alt="">
+                    <div class="details">
+                        <div>
+                            <h3>{{ popular_review.movie.title }}</h3>
+                            <div class="stars" data-id="{{ popular_review.rating }}">
+                                <!-- Stars go here -->
+                                <h4>{{ popular_review.rating }}/10</h4>
+                            </div>
+                            {% if popular_review.description %}
+                                <p>"{{ popular_review.description }}"</p>
+                            {% endif %}
+                            <div class="review-user">
+                                <div class="line"></div>
+                                <a href="{% url 'profile' popular_review.user.id %}" class="review-user-link">{{ popular_review.user }}</a>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items:center; margin-top: 20px;">
+                                <div class="like-count">
+                                    {% if user in popular_review.likes.all %}
+                                        <i class="fa-solid fa-heart liked" id="like-btn" data-id="{{ popular_review.id }}"></i>
+                                    {% else %}
+                                        <i class="fa-solid fa-heart" id="like-btn" data-id="{{ popular_review.id }}"></i>
+                                    {% endif %}
+                                    <span>{{ popular_review.likes.count }} likes</span>
+                                </div>
+                                <a href="{% url 'movie-detail' popular_review.movie.pk %}">View Movie<i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

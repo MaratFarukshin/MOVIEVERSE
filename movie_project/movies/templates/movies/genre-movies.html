@@ -1,0 +1,21 @@
+{% extends 'movies/layout.html' %}
+
+{% block title %}{{ genre.name }}{% endblock %}
+
+{% block body %}
+    <div class="genre-container">
+        <div class="header">
+            <img src="{{ main_image }}" alt="">
+        </div>
+        <div class="genre-movies">
+            <h1>{{ genre }}</h1>
+            <ul>
+                {% for movie in movies %}
+                    <li>
+                        {% include 'movies/partials/card.html' %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

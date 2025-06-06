@@ -1,0 +1,22 @@
+<div class="form-wrapper">
+    <!-- Search form -->
+    <form method="get" class="search-form" autocomplete="off"> 
+        <input type="hidden" name="view" value="{{ view_mode }}">
+        {{ search_form }}
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </form>
+
+    <!-- Sort form -->
+    <form method="get" class="sort-form">
+        <input type="hidden" name="view" value="{{ view_mode }}">
+        {{ sort_form.as_p }}
+    </form>
+
+    <!-- Conditionally render layout buttons -->
+    {% if show_layout_buttons %}
+    <div class="layout-buttons">
+        <i class="fa-solid fa-list" id="list-view-btn" data-view="list"></i>
+        <i class="fa-solid fa-grip" id="grid-view-btn" data-view="grid"></i>
+    </div>
+    {% endif %}
+</div>

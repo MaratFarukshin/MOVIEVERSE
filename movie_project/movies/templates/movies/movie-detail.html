@@ -1,0 +1,262 @@
+{% extends 'movies/layout.html' %}
+{% load custom_filters %}
+
+{% block title %}MovieVerse - {{ movie.title }}{% endblock %}
+
+{% block body %}
+
+    {% include 'movies/partials/image-modal.html' %}
+    {% include 'movies/partials/add-movie-image.html' %}
+
+    <section class="movie">
+        <img class="movie-backdrop" src="{{ movie.backdrop_path.url }}" alt="{{ movie.title }}">
+        <header class="movie-header">
+            <h1 class="movie-title">{{ movie.title }}</h1>
+            <nav class="movie-genre-list">
+                {% for genre in movie.genres.all %}
+                    <a href="{% url 'genre-detail' genre.pk %}" class="movie-genre">{{ genre }}</a>
+                {% endfor %}
+            </nav>
+            <div class="sub-info">
+                <p class="movie-date">Release Date: {{ movie.release_date }}</p>
+                <p class="movie-runtime">Runtime: {{ movie.runtime }}</p>
+            </div>
+        </header>
+        <figure class="movie-poster">
+            <img src="{{ movie.poster_path.url }}" alt="{{ movie.title }}">
+        </figure>
+    </section>
+
+    <section class="movie-details">
+        <section class="movie-overview">
+            <div class="description hidden">
+                <header>
+                    <h1>Overview</h1>
+                </header>
+                <p>{{ movie.overview }}</p>
+                <!-- {% with user.profile.watchlist.movies.all as user_watchlist %}
+                    {% if movie in user_watchlist %}
+                        <div class="add-watchlist-btn watchlisted" data-id="{{ movie.id }}">
+                            <span>Remove from Watchlist</span>
+                            <button>-</button>
+                        </div>
+                    {% else %}
+                        <div class="add-watchlist-btn" data-id="{{ movie.id }}">
+                            <span>Add to Watchlist</span>
+                            <button>+</button>
+                        </div>
+                    {% endif %}
+                {% endwith %} -->
+                <div class="actions">
+
+                    {% if movie in profile.watchlist.movies.all %}
+                        <button class="action-btn" id="watchlist-btn-with-text watchlisted" data-id="{{ movie.id }}">
+                            <span>Remove from watchlist</span>
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    {% else %}
+                        <button class="action-btn" id="watchlist-btn-with-text" data-id="{{ movie.id }}">
+                            <span>Add to watchlist</span>
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    {% endif %}
+                    
+                </div>
+            </div>
+            {% if overview_images %}
+                <section class="images">
+                {% for image in overview_images %}
+                    <img src="{{ image.image.url }}" alt="{{ image }}" class="hidden">
+                {% endfor %}
+                </section>
+            {% endif %}
+        </section>
+
+        <section class="movie-rating hidden">
+            <header>
+                <h3>Rating: </h3>
+            </header>
+            <span>{{ movie.avg_rating|floatformat:2 }}</span>
+        </section>
+
+        {% if movie.actors.all %}
+            <section class="cast">
+                <header>
+                    <h1 class="hidden">Cast</h1>
+                </header>
+                <div class="cast-wrapper">
+                    {% for actor in movie.actors.all %}
+                        <div class="cast-actor hidden">
+                            <a href="{% url 'person-detail' 'actors' actor.pk %}">
+                                <img src="{{ actor.image.url }}" alt="{{ actor.name }}">
+                            </a>
+                            <span class="cast-actor-name">{{ actor }}</span>
+                            {% if actor_roles|get_item:actor.pk %}
+                                <p class="cast-actor-role">{{ actor_roles|get_item:actor.pk }}</p> 
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <section class="cast">
+                <header>
+                    <h1 class="hidden">No Cast Added Yet</h1>
+                </header>
+            </section>
+        {% endif %}
+
+        {% if director %}
+        <section class="movie-director hidden">
+            <h1>Director</h1>
+            <div class="image">
+                <div class="line"></div>
+                <a href="{% url 'person-detail' 'directors' director.pk %}">
+                    <img src="{{ director.image.url }}" alt="{{ director.name }}">
+                </a>
+                <div class="line"></div>
+            </div>
+            <h3 class="movie-director-name">{{ director }}</h3>
+            {% if director_movies %}
+                <div class="movie-director-movies">
+                    <span>More movies from the director</span>
+                    <div class="wrapper">
+                        {% for movie in director_movies %}
+                            <div class="card hidden">
+                                <a href="{% url 'movie-detail' movie.pk %}">
+                                    <img src="{{ movie.poster_path.url }}" alt="{{ movie.title }}">
+                                    <div class="card-overlay">
+                                        <h3>{{ movie.title }}</h3>
+                                        <button>Add to Watchlist</button>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="movie-detail-link hidden">
+                        <a href="{% url 'person-detail' 'directors' director.pk %}">View All</a>
+                        <i class="fa-solid fa-angle-right"></i>
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        {% if similar_movies %}
+            <section class="similar-movies hidden">
+                <header>
+                    <h1>Similar Movies</h1>
+                </header>
+                <ul class="similar-movie-list">
+                    {% for movie in similar_movies %}
+                        <li>
+                            {% include 'movies/partials/card.html' %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endif %}
+
+        <section class="reviews">
+            <header>
+                <h1 class="hidden">{% if top_reviews %} Top Reviews {% else %} No Reviews Yet {% endif %}</h1>
+            </header>
+            {% if top_reviews %}
+                <div class="wrapper">
+                    {% for review in top_reviews %}
+                    <div class="top-review hidden">
+                        <h3>{{ review.rating }}/10 Stars</h3>
+                        <p>{{ review.description }}</p>
+                        <div class="user">
+                            <div class="line"></div>
+                            <span>{{ review.user }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div style="text-align: center;">
+                    <div class="movie-detail-link hidden">
+                        <a href="{% url 'movie-reviews' movie.pk %}">View All</a>
+                        <i class="fa-solid fa-angle-right"></i>
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+        
+        <section class="awards">
+            <header>
+                <h1 class="hidden">Awards and Nominations</h1>
+            </header>
+            {% if awards_by_name.items %}
+            <ul>
+                {% for award_name, award_data in awards_by_name.items %}
+                    <li class="award-name hidden">
+                        <h2>{{ award_name }}</h2>
+                        <span>{{ award_data.win_count }} wins {{ award_data.nomination_count }} Nominations</span>
+                        <ul class="award-list hidden">
+                            {% for award in award_data.awards %}
+                                <li class="award-item">
+                                    {% if award.winner %}
+                                        <i class="fa-solid fa-trophy winner"></i>
+                                    {% else %}
+                                        <i class="fa-solid fa-award nominee"></i>
+                                    {% endif %}
+                                    <div class="award-details">
+                                        <h3>{{ award.category }}<span>({{ award.year }})</span></h3>
+                                        {% if award.winner %}
+                                            <p>{{ award.recipient }} - <span>Winner</span></p>
+                                        {% else %}
+                                            <p>{{ award.recipient }} - <span>Nominee</span></p>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <h3 class="hidden">No awards</h3>
+            {% endif %}
+            <div class="gallery movies hidden">
+                <div class="header">
+                   <div style="display: flex; align-items: center; gap: 10px;">
+                      <h1>Photos</h1>
+                      <span>({{ all_images_count }})</span>
+                   </div>
+                   <button class="add-photo-btn">
+                      <span>Add photos</span>
+                      <i class="fa-solid fa-plus"></i>
+                   </button>
+                </div>
+                <ul>
+                   {% for image in movie.images.all|slice:4 %}
+                      {% if forloop.last and all_images_count > 4 %}
+                         <li class="last-image-item">
+                            <a href="{% url 'movie-images' movie.id %}">
+                               <img 
+                               src="{{ image.image.url }}" 
+                               alt="{{ image }}" 
+                               class="clickable-pic last" 
+                               data-image="{{ image.image.url }}" data-id="{{ image.id }}">
+                               <div class="overlay">
+                                  <i class="fa-solid fa-image"></i>
+                                  <h3>+ {{ more_images_count }}</h3>
+                               </div>
+                            </a>
+                         </li>
+                      {% else %}
+                         <li>
+                            <img 
+                               src="{{ image.image.url }}" 
+                               alt="{{ image }}" 
+                               class="clickable-pic" 
+                               data-image="{{ image.image.url }}" data-id="{{ image.id }}">
+                         </li>
+                      {% endif %}
+                   {% endfor %}
+                </ul>
+            </div>
+        </section>
+    </section>
+{% endblock %}

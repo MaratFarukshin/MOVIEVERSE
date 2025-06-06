@@ -1,0 +1,24 @@
+{% extends 'movies/layout.html' %}
+
+{% block title %} MovieVerse - All Movies {% endblock %}
+    
+{% block body %}
+    <div class="container">
+
+        {% include 'users/partials/filter-sidebar.html' %}
+
+        <div class="content">
+
+            {% include 'users/partials/form-wrapper.html' %}
+
+            <ul class="all-movie-list">
+                {% for movie in movies %}
+                    <li class="skeleton">
+                        {% include 'movies/partials/card.html' %}
+                    </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+{% endblock %}

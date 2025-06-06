@@ -1,0 +1,43 @@
+{% extends 'movies/layout.html' %}
+
+{% block title %} {{ user }}'s Watchlist {% endblock %}
+
+{% block body %}
+<section class="list-section">
+    <header class="header">
+        <div>
+            <h1>Watchlist</h1>
+            <h3 style="margin-top: 10px;">Your Movie Picks, All in One Place.</h3>
+        </div>
+        <div>
+            <h3>{{ watchlist_movies.count }} Titles</h3>
+        </div>
+    </header>
+
+    
+
+    <main class="list-container">
+
+        {% include 'users/partials/filter-sidebar.html' %}
+    
+        <div class="content">
+            
+            {% include 'users/partials/form-wrapper.html' %} 
+    
+            <ol>
+                {% for movie in watchlist_movies %}
+                    {% if view_mode == 'grid' %}
+                        <li class="skeleton">
+                            {% include 'movies/partials/card.html' %}
+                        </li>
+                    {% else %}
+                        {% include 'movies/partials/movie-list-item.html' %}
+                    {% endif %}
+                {% endfor %}
+            </ol>
+
+        </div>
+    </main>
+    
+</section>
+{% endblock %}

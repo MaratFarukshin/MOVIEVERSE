@@ -1,0 +1,125 @@
+ {% load custom_filters %}
+ 
+ <li class="movie-list-item skeleton">
+    <div class="card">
+        <div class="image">
+            <a href="{% url 'movie-detail' movie.pk %}">
+                <img src="{{ movie.poster_path.url }}" alt="{{ movie.title }}">
+            </a>
+        </div>
+        <div class="actions">
+            <!-- Watched button -->
+            {% with user.profile.watched_movies.all as watched_movies and user.profile.watchlist.movies.all as watchlist %}
+                {% if movie in watched_movies and movie not in watchlist %}
+                    <i class="fa-solid fa-eye watched" id="watched-movie-btn" data-id="{{ movie.id }}"></i>
+                {% else %}
+                    <i class="fa-solid fa-eye" id="watched-movie-btn" data-id="{{ movie.id }}"></i>
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Watchlist button -->
+            {% with user.profile.watchlist.movies.all as user_watchlist %}
+                {% if movie in user_watchlist %}
+                    <i class="fa-solid fa-bookmark watchlisted" id="watchlist-btn" data-id="{{ movie.id }}"></i>
+                {% else %}
+                    <i class="fa-solid fa-bookmark" id="watchlist-btn" data-id="{{ movie.id }}"></i>
+                {% endif %}
+            {% endwith %}
+            <i class="fa-solid fa-ellipsis" id="other-actions-btn"></i>
+        </div>
+        <!-- other actions -->
+        <div class="other-actions">
+
+            <!-- add to favorites -->
+            {% if profile|is_favorite:movie %}
+                <button type="button" class="action-btn" id="add-to-favorites-btn" data-id="{{ movie.id }}" data-model="movie">Remove from favorites</button>
+            {% else %}
+                <button type="button" class="action-btn" id="add-to-favorites-btn" data-id="{{ movie.id }}" data-model="movie">Add to favorites</button>
+            {% endif %}
+
+            <button>Add to list</button>
+            <button>Rate this movie</button>
+            <button>Show in lists</button>
+        </div>
+    </div>
+    <div class="movie-list-item-details">
+        <div class="title">
+            <span class="counter">{{ forloop.counter }}.</span> 
+            <h2><a href="{% url 'movie-detail' movie.pk %}">{{ movie.title }}</a></h2>
+            <span class="movie-year">{{ movie.release_date.year }}</span>
+
+            <!-- Skeleton placeholder for title -->
+            <div class="title-placeholder"></div>
+            
+        </div>
+        <div class="tags">
+            {% if movie.genres.all %}
+                <a href="{% url 'genre-detail' movie.genres.first.pk %}" class="genre-tag">{{ movie.genres.first }}</a>
+            {% endif %}
+            <div class="rating-tag 
+                {% if movie.avg_rating >= 8 %}
+                    high-rating
+                {% elif movie.avg_rating >= 6 %}
+                    medium-rating
+                {% elif movie.avg_rating < 6 and movie.avg_rating > 0 %}
+                    low-rating
+                {% elif movie.avg_rating == 0 %}
+                    unrated
+                {% endif %}">
+                <i class="fa-solid fa-star"></i>
+                {% if movie.avg_rating %}
+                    {{ movie.avg_rating|floatformat:2 }}
+                {% else %}
+                    Unrated
+                {% endif %}
+            </div>
+            {% if movie.reviews.all %}
+                <div class="review-count">({{ movie.reviews.count }}) reviews</div>
+            {% else %}
+                <div class="review-count">No reviews yet</div>
+            {% endif %}
+
+            <!-- Skeleton placeholder for tags -->
+            <div class="tag-placeholder"></div>
+            <div class="tag-placeholder"></div>
+
+        </div>
+        <p class="runtime">{{ movie.runtime }}</p>
+        <p>{{ movie.overview }}</p>
+
+        <div class="overview-placeholder">
+            <div class="line-placeholder"></div>
+            <div class="line-placeholder"></div>
+            <div class="line-placeholder last"></div>
+        </div>
+
+        <div class="director">
+            <h3>Director</h3>
+            {% if movie.directors.exists %}
+                {% for director in movie.directors.all %}
+                    {% if forloop.first %}
+                        <span>
+                            <a href="{% url 'person-detail' 'directors' director.pk %}">{{ director }}</a>
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <span>No director yet</span>
+            {% endif %}
+        </div>
+        <ul class="cast-list">
+            <h3>Cast</h3>
+            <div class="wrapper">
+                {% if movie.actors.all %}
+                    {% for actor in movie.actors.all|slice:":4" %}
+                        <li>
+                            <a href="{% url 'person-detail' 'actors' actor.pk %}">{{ actor }}</a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <span>No cast yet</span>
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+</li>

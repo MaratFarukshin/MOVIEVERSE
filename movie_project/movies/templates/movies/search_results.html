@@ -1,0 +1,95 @@
+{% extends 'movies/layout.html' %}
+
+{% block title %} Search Results for {{ query }} {% endblock %}
+
+{% block body %}
+    <section class="search-results-section">
+        <div class="header">
+            <h1>Search Results for <span>"{{ query }}"</span></h1>
+        </div>
+        <div class="search-results-container">
+
+            <div class="content">
+
+                <form method="GET" action="{% url 'search_results' %}" class="filter-search-form">
+                    <!-- Hidden input to preserve the query parameter -->
+                    <input type="hidden" name="query" value="{{ query }}">
+                
+                    <ul class="search-filters">
+                        <span>Show Results For: </span>
+                        <li class="filter-button">
+                            <input type="radio" class="filter-radio" id="all" name="filter" value="all" {% if selected_filter == 'all' %}checked{% endif %}>
+                            <label for="all">All</label>
+                        </li>
+                        <li class="filter-button">
+                            <input type="radio" class="filter-radio" id="movies" name="filter" value="movies" {% if selected_filter == 'movies' %}checked{% endif %}>
+                            <label for="movies">Movies</label>
+                        </li>
+                        <li class="filter-button">
+                            <input type="radio" class="filter-radio" id="actors" name="filter" value="actors" {% if selected_filter == 'actors' %}checked{% endif %}>
+                            <label for="actors">Actors</label>
+                        </li>
+                        <li class="filter-button">
+                            <input type="radio" class="filter-radio" id="directors" name="filter" value="directors" {% if selected_filter == 'directors' %}checked{% endif %}>
+                            <label for="directors">Directors</label>
+                        </li>
+                    </ul>        
+                </form>
+                
+                
+
+                <!-- Movie results -->
+                {% if movies %}
+                    <h3 class="marker">Movies ({{ movies.count }})</h3>
+                    <ul class="search-result-list">
+                        {% for movie in movies %}
+                            <li>{% include 'movies/partials/card.html' %}</li>
+                        {% endfor %}
+                        <div class="button-container">
+                            <button class="load-more-btn">Load More<i class="fa-solid fa-angle-down"></i></button>
+                        </div>
+                    </ul>
+                {% endif %}
+
+                <!-- Actor results -->
+                {% if actors %}
+                    <h3 class="marker">Actors ({{ actors.count }})</h3>
+                    <ul class="search-result-list">
+                        {% for actor in actors %}
+                            <li class="person">
+                                <div class="image">
+                                    <a href="{% url 'person-detail' 'actors' actor.pk %}">
+                                        <img src="{{ actor.image.url }}" alt="">
+                                    </a>
+                                </div>
+                                <div class="details">
+                                    <h3>{{ actor }}</h3>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <!-- Director results -->
+                {% if directors %}
+                    <h3 class="marker">Directors ({{ directors.count}})</h3>
+                    <ul class="search-result-list">
+                        {% for director in directors %}
+                            <li class="person">
+                                <div class="image">
+                                    <a href="{% url 'person-detail' 'directors' director.pk %}">
+                                        <img src="{{ director.image.url }}" alt="">
+                                    </a>
+                                </div>
+                                <div class="details">
+                                    <h3>{{ director }}</h3>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+    </section>
+{% endblock %}

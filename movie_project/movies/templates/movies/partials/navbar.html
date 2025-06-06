@@ -1,0 +1,37 @@
+<nav class="navbar">
+    <a href="{% url 'index' %}" class="logo">MovieVerse</a>
+
+    
+    
+    <div class="nav-controls">
+
+        <!-- Search Form -->
+        <div class="nav-searchbar">
+            <form method="GET" action="{% url 'search_results' %}">
+                <i class="fa-solid fa-magnifying-glass" id="search-icon"></i>
+                <input type="text" name="query" autocomplete="off" value="{{ search_form.query.value|default:'' }}">
+            </form>
+            <div id="suggestions-box" class="suggestions-box"></div>
+        </div>
+
+        <ul>
+            {% if user.is_authenticated %}
+                <li class="profile-menu">
+                    <div class="profile-icon">
+                        <span>{{ user.username }}</span>
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                    <ul class="dropdown-list">
+                        <li class="dropdown-item"><a href="{% url 'profile' request.user.id %}">My Profile</a></li>
+                        <li class="dropdown-item"><a href="{% url 'create-list' %}">Create List</a></li>
+                        <li class="dropdown-item"><a href="{% url 'watchlist' %}">My Watchlist</a></li>
+                        <li class="dropdown-item"><a href="{% url 'logout' %}">Sign out</a></li>
+                    </ul>
+                </li>
+            {% else %}
+                <li class="nav-item"><a href="{% url 'login' %}">Sign In</a></li>
+            {% endif %}
+            <li class="menu-bars"></li>
+        </ul>            
+    </div>
+</nav>

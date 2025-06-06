@@ -1,0 +1,76 @@
+{% load custom_filters %}
+
+<div class="card" data-id="{{ movie.id }}" data-title="{{ movie.title }}" data-year="{{ movie.release_date.year }}">
+    <div class="image">
+        <a href="{% url 'movie-detail' movie.pk %}">
+            <img src="{{ movie.poster_path.url }}" alt="{{ movie.title }}">
+        </a>
+    </div>
+    <div class="details">
+        <h3>{{ movie.title }}</h3>
+        <h4>{{ movie.release_date.year }}</h4>
+        <!-- Skeleton placeholder for title -->
+        <div class="title-placeholder"></div>
+        
+        <div class="tags">
+            <div class="genre-tag">{{ movie.genres.first }}</div>
+            <div class="
+                rating-tag 
+                {% if movie.avg_rating >= 8 %}
+                    high-rating
+                {% elif movie.avg_rating >= 5 %}
+                    medium-rating
+                {% elif movie.avg_rating < 5 and movie.avg_rating > 0 %}
+                    low-rating
+                {% elif movie.avg_rating == 0 %}
+                    unrated
+                {% endif %}">
+                <i class="fa-solid fa-star"></i>
+                {{ movie.avg_rating|floatformat:2 }}
+            </div>
+                        
+            <!-- Skeleton placeholder for tags -->
+            <div class="tag-placeholder"></div>
+            <div class="tag-placeholder"></div>
+        </div>
+    </div>
+    <div class="actions">
+        <!-- Watched button -->
+        {% with user.profile.watched_movies.all as watched_movies and user.profile.watchlist.movies.all as watchlist %}
+            {% if movie in watched_movies and movie not in watchlist %}
+                <i class="fa-solid fa-eye watched" id="watched-movie-btn" data-id="{{ movie.id }}"></i>
+            {% else %}
+                <i class="fa-solid fa-eye" id="watched-movie-btn" data-id="{{ movie.id }}"></i>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Watchlist button -->
+        {% with user.profile.watchlist.movies.all as user_watchlist %}
+            {% if movie in user_watchlist %}
+                <i class="fa-solid fa-bookmark watchlisted" id="watchlist-btn" data-id="{{ movie.id }}"></i>
+            {% else %}
+                <i class="fa-solid fa-bookmark" id="watchlist-btn" data-id="{{ movie.id }}"></i>
+            {% endif %}
+        {% endwith %}
+        
+        <i class="fa-solid fa-ellipsis" id="other-actions-btn"></i>
+    </div>
+    <!-- other actions -->
+    <div class="other-actions">
+
+        <!-- add movie to favorites -->
+        {% if profile|is_favorite:movie %}
+            <button type="button" class="action-btn" id="add-to-favorites-btn" data-id="{{ movie.id }}" data-model="movie">Remove from favorites</button>
+        {% else %}
+            <button type="button" class="action-btn" id="add-to-favorites-btn" data-id="{{ movie.id }}" data-model="movie">Add to favorites</button>
+        {% endif %}
+
+        <!-- add movie to list -->
+        <button type="button" class="action-btn" id="add-to-list-btn" data-id="{{ movie.id }}">Add to list</button>
+
+        <!-- create review for movie -->
+        <button class="action-btn" id="add-review-btn" data-id="{{ movie.id }}">Rate this movie</button>
+
+        <button class="action-btn">Show in lists</button>
+    </div>
+</div>
