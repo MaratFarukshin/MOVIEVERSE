@@ -41,9 +41,6 @@ Rating System: Rate movies/TV series on a scale of 1 to 10, with average ratings
 ### **Technologies Used**
 - Backend: Django (Python)
 - Frontend: HTML5, CSS3, JavaScript
-- Database: SQLite
-- API Integration: The Movie Database (TMDb) API
-- Authentication: Django Allauth for social logins and user authentication.
 
 ### **API Integration:**
 This project integrates with the TMDb API to fetch real-time movie and TV series data, including:
